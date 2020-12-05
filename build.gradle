@@ -1,23 +1,77 @@
 plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+    id 'org.jetbrains.kotlin.multiplatform' version '1.4.20'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.20'
+    id 'com.android.application'
 }
-
-group 'de.deftk.lonet'
-version '0.1.0-beta4'
+group = 'de.deftk.lonet.api'
+version = '0.1.0-beta4'
 
 repositories {
+    gradlePluginPortal()
+    google()
+    jcenter()
     mavenCentral()
 }
-
-dependencies {
-    implementation "com.google.code.gson:gson:2.8.6"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = '1.8'
+        }
+    }
+    android()
+    iosArm64 {
+        binaries {
+            framework {
+                baseName = 'library'
+            }
+        }
+    }
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
+            }
+        }
+        commonTest {
+        }
+        jvmMain {
+        }
+        jvmTest {
+        }
+        androidMain {
+        }
+        androidTest {
+        }
+        iosArm64Main {
+        }
+        iosArm64Test {
+        }
+    }
 }
+android {
+    compileSdkVersion 30
+    defaultConfig {
+        applicationId 'de.deftk.lonet.android'
+        minSdkVersion 24
+        targetSdkVersion 30
+        versionCode 1
+        versionName '1.0'
+    }
+    buildTypes {
+        'release' {
+            minifyEnabled false
+        }
+    }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    sourceSets {
+        main {
+            manifest.srcFile 'src/androidMain/AndroidManifest.xml'
+            java.srcDirs = ['src/androidMain/kotlin']
+            res.srcDirs = ['src/androidMain/res']
+        }
+        test {
+            java.srcDirs = ['src/androidTest/kotlin']
+            res.srcDirs = ['src/androidTest/res']
+        }
+    }
 }
